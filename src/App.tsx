@@ -159,7 +159,7 @@ export default function App() {
 
         {/* Paper overlay – half size, centered over paper in image */}
         <div
-          className="absolute left-[392px] w-[376px] top-[274px] h-[51px] overflow-auto p-2 pt-2 pb-3 rounded-b shadow-sm border border-[#e2ddcb] bg-white"
+          className="absolute left-[392px] w-[376px] top-[274px] h-[51px] overflow-auto p-2 pt-2 pb-3 rounded-b shadow-sm border border-[#e2ddcb] bg-[#dcd3c3]"
           aria-label="Paper"
         >
           <pre
