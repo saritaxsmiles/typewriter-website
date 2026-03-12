@@ -4687,7 +4687,7 @@ export default function Keyboard() {
     <div className="relative size-full" data-name="Keyboard">
       <Frame4 />
       <div className="-translate-x-1/2 -translate-y-1/2 absolute h-[53.979px] left-[calc(50%-10.5px)] top-[calc(50%+114px)] w-[690px]" data-name="Component 2">
-        <div className="-translate-x-1/2 absolute h-[53.979px] left-1/2 top-0 w-[690px]" data-name="space">
+        <div className="-translate-x-1/2 absolute h-[53.979px] left-1/2 top-[2.85px] w-[655.5px]" data-name="space">
           <S />
           <div className="absolute inset-[-0.04%_0_24.08%_0]" data-name="V layer 10">
             <div className="absolute inset-[0_-0.57%_-19.51%_-0.57%]">

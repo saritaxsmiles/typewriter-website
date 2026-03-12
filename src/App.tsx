@@ -213,7 +213,7 @@ export default function App() {
 
         {/* Keyboard overlay – Figma Make layout */}
         <div
-          className="absolute left-[26.77%] right-[24.88%] bottom-[8%] h-[21.15%] flex items-center justify-center overflow-visible"
+          className="absolute left-[26.77%] right-[24.88%] bottom-[7%] h-[21.15%] flex items-center justify-center overflow-visible"
           aria-label="Keyboard"
         >
           <InteractiveKeyboard pressedKeys={pressedKeys} />
