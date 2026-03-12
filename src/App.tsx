@@ -24,12 +24,34 @@ function escapeHtml(s: string): string {
   return div.innerHTML;
 }
 
+/** If there's a non-collapsed selection in the paper pre, return [start, end] in buffer coordinates; else null. */
+function getPaperSelectionRange(preEl: HTMLPreElement | null, bufferLength: number): [number, number] | null {
+  if (!preEl) return null;
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return null;
+  const range = sel.getRangeAt(0);
+  if (!preEl.contains(range.startContainer) || !preEl.contains(range.endContainer)) return null;
+  const textNode = preEl.firstChild;
+  const getOffset = (node: Node, offset: number): number => {
+    if (node === textNode && textNode?.nodeType === Node.TEXT_NODE) return Math.min(offset, bufferLength);
+    if (node === preEl) return offset === 0 ? 0 : bufferLength;
+    return bufferLength;
+  };
+  const start = getOffset(range.startContainer, range.startOffset);
+  const end = getOffset(range.endContainer, range.endOffset);
+  if (start === end) return null;
+  return [Math.min(start, end), Math.max(start, end)];
+}
+
 export default function App() {
   const [buffer, setBuffer] = useState('');
   const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
   const wrapRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLPreElement>(null);
+  const bufferLengthRef = useRef(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
+
+  bufferLengthRef.current = buffer.length;
   const strikeAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const playTypewriterSound = useCallback(() => {
@@ -73,6 +95,11 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const clearPaperSelectionAndResetCursor = () => {
+      window.getSelection()?.removeAllRanges();
+      wrapRef.current?.focus();
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const dataKey = getDataKey(e.key);
       setPressedKeys((prev) => new Set(prev).add(dataKey === 'Shift' ? e.key : dataKey));
@@ -83,7 +110,27 @@ export default function App() {
 
       if (key === 'Backspace') {
         e.preventDefault();
-        setBuffer((b) => b.slice(0, -1));
+        const range = getPaperSelectionRange(paperRef.current, bufferLengthRef.current);
+        if (range) {
+          const [start, end] = range;
+          setBuffer((b) => b.slice(0, start) + b.slice(end));
+          clearPaperSelectionAndResetCursor();
+        } else {
+          setBuffer((b) => b.slice(0, -1));
+        }
+        playStrikeSound();
+        return;
+      }
+      if (key === 'Delete') {
+        e.preventDefault();
+        const range = getPaperSelectionRange(paperRef.current, bufferLengthRef.current);
+        if (range) {
+          const [start, end] = range;
+          setBuffer((b) => b.slice(0, start) + b.slice(end));
+          clearPaperSelectionAndResetCursor();
+        } else {
+          setBuffer((b) => b.slice(0, -1));
+        }
         playStrikeSound();
         return;
       }
@@ -130,12 +177,6 @@ export default function App() {
     };
   }, [playStrikeSound]);
 
-  useEffect(() => {
-    if (paperRef.current) {
-      paperRef.current.scrollTop = paperRef.current.scrollHeight;
-    }
-  }, [buffer]);
-
   return (
     <div
       className="min-h-screen flex flex-col items-center p-6 pb-12 bg-white
@@ -157,14 +198,14 @@ export default function App() {
             className="block w-full h-auto align-middle md:max-h-full md:max-w-full md:object-contain md:w-auto md:mx-auto"
           />
 
-        {/* Paper overlay – half size, centered over paper in image */}
+        {/* Paper overlay – anchored to metal bar at bottom, grows upward as text fills */}
         <div
-          className="absolute left-[392px] w-[376px] top-[274px] h-[51px] overflow-auto p-2 pt-2 pb-3 rounded-b shadow-sm border border-[#e2ddcb] bg-[#dcd3c3]"
+          className="absolute left-[392px] w-[376px] bottom-[calc(100%-325px)] min-h-[51px] overflow-visible p-2 pt-2 pb-3 rounded-b shadow-sm border border-[#e2ddcb] bg-[#dcd3c3] flex flex-col justify-end"
           aria-label="Paper"
         >
           <pre
             ref={paperRef}
-            className="m-0 font-[Special_Elite,'Courier_New',Courier,monospace] text-xs leading-normal text-[#1a1a1a] whitespace-pre-wrap break-words min-h-full"
+            className="m-0 font-[Special_Elite,'Courier_New',Courier,monospace] text-xs leading-normal text-[#1a1a1a] whitespace-pre-wrap break-words min-h-0"
           >
             {escapeHtml(buffer)}
             <span className="caret" style={{ animation: 'blink 1s step-end infinite' }}>|</span>
