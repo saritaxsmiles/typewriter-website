@@ -185,8 +185,7 @@ export default function App() {
       <div className="flex-1 flex items-center justify-center min-h-0 w-full">
         <div
           ref={wrapRef}
-          className="relative max-w-[848px] w-full focus:outline-none overflow-visible
-            md:max-h-full md:max-w-full md:h-full"
+          className="relative w-full max-w-[848px] md:w-[min(100%,calc(85dvh*848/600))] md:aspect-[848/600] focus:outline-none overflow-visible md:max-w-full"
           tabIndex={0}
           role="application"
           aria-label="Typewriter"
@@ -195,17 +194,17 @@ export default function App() {
           <img
             src={TYPEWRITER_IMG}
             alt="Typewriter"
-            className="block w-full h-auto align-middle md:max-h-full md:max-w-full md:object-contain md:w-auto md:mx-auto"
+            className="block w-full h-auto md:h-full object-contain"
           />
 
-        {/* Paper overlay – anchored to metal bar at bottom, grows upward as text fills */}
+        {/* Paper overlay – same %-based layout as keyboard so it resizes with the typewriter */}
         <div
-          className="absolute left-[392px] w-[376px] bottom-[calc(100%-325px)] min-h-[51px] overflow-visible p-2 pt-2 pb-3 rounded-b shadow-sm border border-[#e2ddcb] bg-[#dcd3c3] flex flex-col justify-end"
+          className="absolute left-[33.23%] right-[32.43%] bottom-[56.33%] min-h-[8.5%] overflow-visible p-2 pt-2 pb-3 rounded-b shadow-sm border border-[#e2ddcb] bg-[#dcd3c3] flex flex-col justify-end"
           aria-label="Paper"
         >
           <pre
             ref={paperRef}
-            className="m-0 font-[Special_Elite,'Courier_New',Courier,monospace] text-xs leading-normal text-[#1a1a1a] whitespace-pre-wrap break-words min-h-0"
+            className="m-0 font-[Special_Elite,'Courier_New',Courier,monospace] text-sm leading-normal text-[#1a1a1a] whitespace-pre-wrap break-words min-h-0"
           >
             {escapeHtml(buffer)}
             <span className="caret" style={{ animation: 'blink 1s step-end infinite' }}>|</span>
