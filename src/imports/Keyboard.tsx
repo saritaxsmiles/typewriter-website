@@ -2996,7 +2996,7 @@ function Frame1() {
           </div>
         </div>
       </div>
-      <div className="h-[98px] relative shrink-0 w-[56px]" data-name="s">
+      <div className="h-[98px] relative shrink-0 w-[56px]" data-name="g">
         <div className="-translate-x-1/2 absolute h-[61px] left-1/2 top-[40px] w-[14px]" data-name="stand">
           <div className="absolute inset-[-1.64%_-7.14%]">
             <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 63">
