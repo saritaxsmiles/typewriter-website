@@ -199,7 +199,7 @@ export default function App() {
 
         {/* Paper overlay – same %-based layout as keyboard so it resizes with the typewriter */}
         <div
-          className="absolute left-[33.23%] right-[32.43%] bottom-[56.33%] min-h-[8.5%] overflow-visible p-2 pt-2 pb-3 rounded-b shadow-sm border border-[#e2ddcb] bg-[#dcd3c3] flex flex-col justify-end"
+          className="absolute left-[50.4%] -translate-x-1/2 bottom-[56.33%] w-[max(200px,34.34%)] min-h-[8.5%] overflow-visible p-2 pt-2 pb-3 rounded-b shadow-sm border border-[#e2ddcb] bg-[#dcd3c3] flex flex-col justify-end"
           aria-label="Paper"
         >
           <pre
