@@ -190,6 +190,50 @@ export default function App() {
           role="application"
           aria-label="Typewriter"
           onClick={() => wrapRef.current?.focus()}
+          onKeyDown={(e) => {
+            if (e.key.toLowerCase() === 'a' && (e.metaKey || e.ctrlKey)) {
+              e.preventDefault();
+              e.stopPropagation();
+              const pre = paperRef.current;
+              if (!pre) return;
+              const caretEl = pre.querySelector('.caret');
+              const range = document.createRange();
+              const sel = window.getSelection();
+              if (!sel) return;
+
+              let startNode: Node | null = null;
+              let startOffset = 0;
+              let endNode: Node | null = null;
+              let endOffset = 0;
+
+              for (const node of pre.childNodes) {
+                if (caretEl && node === caretEl) break;
+                if (node.nodeType === Node.TEXT_NODE) {
+                  const tn = node as Text;
+                  if (startNode === null) {
+                    startNode = tn;
+                    startOffset = 0;
+                  }
+                  endNode = tn;
+                  endOffset = tn.length;
+                }
+              }
+
+              sel.removeAllRanges();
+              if (startNode && endNode) {
+                range.setStart(startNode, startOffset);
+                range.setEnd(endNode, endOffset);
+                sel.addRange(range);
+              } else if (caretEl) {
+                const idx = Array.prototype.indexOf.call(pre.childNodes, caretEl);
+                if (idx >= 0) {
+                  range.setStart(pre, idx);
+                  range.setEnd(pre, idx);
+                  sel.addRange(range);
+                }
+              }
+            }
+          }}
         >
           <img
             src={TYPEWRITER_IMG}
@@ -218,12 +262,29 @@ export default function App() {
         >
           <InteractiveKeyboard pressedKeys={pressedKeys} />
         </div>
+
+      {buffer.length > 0 && (
+        <a
+          href="#"
+          className="absolute left-1/2 top-full z-10 mt-[calc((600/848)*5%_+_7dvh)] inline-block max-w-full -translate-x-1/2 -translate-y-[7dvh] text-center font-sans text-sm text-neutral-500 hover:text-neutral-600 hover:underline md:mt-[calc((600/848)*2%)] md:-translate-y-3 md:py-2 md:text-xs"
+          onClick={(e) => {
+            e.preventDefault();
+            const blob = new Blob([buffer], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'typewriter.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }}
+        >
+          Click here to download your text as a .txt file
+        </a>
+      )}
         </div>
       </div>
-
-      <p className="mt-4 font-sans text-sm text-[#666] md:mt-0 md:flex-shrink-0 md:py-2 md:text-xs">
-        Click the typewriter, then type. Keys light up and text appears on the paper.
-      </p>
 
       <style>{`
         @keyframes blink { 50% { opacity: 0; } }
