@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useLayoutEffect } from 'react';
 import Keyboard from '../imports/Keyboard';
 
 const KEY_MAP: Record<string, string[]> = {
@@ -29,7 +29,7 @@ export function InteractiveKeyboard({ pressedKeys }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const update = () => {
